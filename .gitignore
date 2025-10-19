@@ -1,0 +1,14 @@
+# Python & Django
+__pycache__/
+*.pyc
+db.sqlite3
+*.log
+
+.venv/
+venv/
+env/
+.env
+.env.example
+
+.DS_Store
+movie_review_api_tmdb.zip
