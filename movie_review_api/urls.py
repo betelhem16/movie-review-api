@@ -6,4 +6,5 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('api/users/', include('users.urls')),
     path('api/reviews/', include('reviews.urls')),
+    path('api/movies/', include('movies.urls')),
 ]

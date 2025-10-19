@@ -1,10 +1,11 @@
 import os, requests
 from django.shortcuts import render
 from rest_framework import generics, permissions, filters
-from .models import Review
+from .models import Review, Movie
 from .serializers import ReviewSerializer
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from movies.tmdb import search_movie, get_movie_details, poster_url, get_genre_mapping
 TMDB_API_KEY = os.getenv('TMDB_API_KEY', None)
 TMDB_SEARCH_URL = 'https://api.themoviedb.org/3/search/movie'
 TMDB_DETAILS_URL = 'https://api.themoviedb.org/3/movie/{}'
@@ -45,12 +46,10 @@ class ReviewListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(movie_title__icontains=movie)
         return queryset
     def perform_create(self, serializer):
-        title = serializer.validated_data.get('movie_title','')
-        info = fetch_tmdb_info(title)
-        if info:
-            serializer.save(owner=self.request.user, movie_year=info.get('year'), movie_genre=info.get('genre'), movie_poster=info.get('poster'))
-        else:
-            serializer.save(owner=self.request.user)
+        title = serializer.validated_data.get('movie_title')
+        movie = get_or_create_movie_by_title(title)
+        serializer.save(owner=self.request.user, movie=movie)
+       
 class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -58,3 +57,32 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 def home_view(request):
     latest = Review.objects.all()[:10]
     return render(request, 'reviews/index.html', {'reviews': latest})
+def get_or_create_movie_by_title(title):
+    existing = Movie.objects.filter(title__iexact=title).first()
+    if existing:
+        return existing
+
+    search = search_movie(title)
+    if search and search.get("results"):
+        top = search["results"][0]
+        tmdb_id = top.get("id")
+        movie, created = Movie.objects.get_or_create(tmdb_id=tmdb_id, defaults={
+            "title": top.get("title") or title,
+            "year": (top.get("release_date") or "")[:4],
+            "overview": top.get("overview") or ""
+        })
+        # fetch details
+        details = get_movie_details(tmdb_id)
+        if details:
+            genres = ", ".join([g['name'] for g in details.get('genres', [])])
+            p = poster_url(details.get('poster_path'))
+            movie.year = (details.get('release_date') or "")[:4] or movie.year
+            movie.genres = genres or movie.genres
+            movie.poster = p or movie.poster
+            movie.overview = details.get('overview') or movie.overview
+            movie.title = details.get('title') or movie.title
+            movie.save()
+        return movie
+
+    # fallback - create a local movie with only title
+    return Movie.objects.create(title=title)
