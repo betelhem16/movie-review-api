@@ -1,0 +1,20 @@
+Table users {
+  id int [pk, increment]
+  username varchar(50) [not null]
+  email varchar(100)
+  password varchar(255) [not null]
+  date_joined datetime [default: `now()`]
+}
+
+Table reviews {
+  id int [pk, increment]
+  movie_title varchar(200) [not null]
+  review_text text [not null]
+  rating int
+  movie_year varchar(10)
+  movie_genre varchar(200)
+  movie_poster varchar(255)
+  owner_id int [ref: > users.id]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
