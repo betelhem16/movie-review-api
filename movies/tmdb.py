@@ -4,7 +4,8 @@ import requests
 from django.core.cache import cache
 from django.conf import settings
 
-TMDB_API_KEY = os.getenv('TMDB_API_KEY') or getattr(settings, 'TMDB_API_KEY', None)
+
+TMDB_API_KEY = getattr(settings, 'TMDB_API_KEY', None)
 BASE = "https://api.themoviedb.org/3"
 IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 
@@ -24,9 +25,10 @@ def tmdb_get(path, params=None, cache_key=None, cache_timeout=60*60):
         if cache_key:
             cache.set(cache_key, data, cache_timeout)
         return data
-    except requests.RequestException:
-        return None
 
+    except requests.RequestException as e:
+     print(f"TMDb request failed: {e}")
+    return None
 def search_movie(title, page=1):
     return tmdb_get("/search/movie", {"query": title, "page": page, "include_adult": False},
                     cache_key=f"tmdb_search_{title}_{page}", cache_timeout=60*60)
@@ -59,6 +61,8 @@ def get_genre_mapping():
         for g in data["genres"]:
             mapping[g['name'].lower()] = str(g['id'])
     cache.set(cache_key, mapping, 60*60*24)
+    if not mapping:
+     print("Warning: TMDb genre mapping is empty. Check your API key or TMDb response.")
     return mapping
 
 def poster_url(poster_path):
