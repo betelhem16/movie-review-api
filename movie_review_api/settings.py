@@ -3,16 +3,18 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 from dotenv import load_dotenv
-load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key')
-TMDB_API_KEY = os.getenv('TMDB_API_KEY')
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+load_dotenv(BASE_DIR / ".env")   # local; in Render you'll set env vars
+
+# Secret & env
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key")
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 INSTALLED_APPS = [
     'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
     'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
-    'rest_framework','django_filters','users','reviews','movies',
+    'rest_framework','rest_framework.authtoken','django_filters', 'whitenoise.runserver_nostatic','users','reviews','movies',
 
 ]
 MIDDLEWARE = [
@@ -50,6 +52,13 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+DATABASES = {
+    'default': dj_database_url.parse(
+        os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+        conn_max_age=600
+    )
+}
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']

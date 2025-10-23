@@ -1,0 +1,36 @@
+<!-- reviews/templates/reviews/index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ project_name }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#f7fafc;color:#111}
+    .wrap{max-width:900px;margin:40px auto;padding:24px;background:#fff;border-radius:10px;box-shadow:0 6px 20px rgba(2,6,23,.08)}
+    h1{margin:0 0 10px}
+    a.btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#2563eb;color:#fff;text-decoration:none;margin-right:8px}
+    code{background:#efefef;padding:3px 6px;border-radius:4px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>{{ project_name }}</h1>
+    <p>A simple Django REST API to create and manage movie reviews.</p>
+    <p>
+      <a class="btn" href="/admin/">Admin</a>
+      <a class="btn" href="/api/reviews/">API: Reviews</a>
+      <a class="btn" href="/api/movies/ping/">API: Movies (ping)</a>
+    </p>
+    <h3>Quick API info</h3>
+    <ul>
+      <li><code>POST /api/users/register/</code> — register</li>
+      <li><code>POST /api/token/</code> — login (JWT)</li>
+      <li><code>GET /api/reviews/</code> — list</li>
+      <li><code>POST /api/reviews/</code> — create (auth)</li>
+      <li><code>POST /api/reviews/&lt;id&gt;/like/</code> — like/unlike (auth)</li>
+    </ul>
+    <small>Check README.md in repo for setup & Postman collection.</small>
+  </div>
+</body>
+</html>
