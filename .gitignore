@@ -12,3 +12,4 @@ env/
 
 .DS_Store
 movie_review_api_tmdb.zip
+.env
