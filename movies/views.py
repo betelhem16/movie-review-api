@@ -2,6 +2,10 @@
 
 # Create your views here.
 # movies/views.py
+from rest_framework import generics, filters
+from .models import Movie
+from .serializers import MovieSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -38,3 +42,8 @@ class RecommendationsView(APIView):
     def get(self, request, tmdb_id):
         data = tmdb_get(f"/movie/{tmdb_id}/recommendations", cache_key=f"tmdb_recs_{tmdb_id}", cache_timeout=60*30)
         return Response(data or {"results": []})
+class MovieListView(generics.ListCreateAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']
