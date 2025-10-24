@@ -5,6 +5,7 @@
 from rest_framework import generics, filters
 from .models import Movie
 from .serializers import MovieSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,5 +46,7 @@ class RecommendationsView(APIView):
 class MovieListView(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['title']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'genres']
+    filterset_fields = ['year', 'genres']
+    ordering_fields = ['release_date', 'title']
