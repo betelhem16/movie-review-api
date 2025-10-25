@@ -2,16 +2,19 @@ services:
   - type: web
     name: movie-review-api
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py migrate
+      python manage.py collectstatic --noinput
     startCommand: gunicorn movie_review_api.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
-        value: your_secret_key
+        value: M9PYabspkPElh7JSyGCcNcZENnLQzps65u7GUa4FcwPluMHHaja-zW13XTNBrnW5DDQ
       - key: DEBUG
         value: False
       - key: ALLOWED_HOSTS
         value: .onrender.com
       - key: TMDB_API_KEY
-        value: your_tmdb_key
+        value: a2e4d166b8b7b22d67776540122a87d5
       - key: DATABASE_URL
-        value: your_postgres_url
+        value: postgresql://movie_review_db_8m9n_user:dF6kMaTjphemYmfiDZfGEzE9lsmOklwr@dpg-d3udb67diees73e6e6t0-a/movie_review_db_8m9n
