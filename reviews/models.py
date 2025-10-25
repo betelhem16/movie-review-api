@@ -10,6 +10,7 @@ class Movie(models.Model):
     genres = models.CharField(max_length=255, blank=True, null=True)  # comma separated
     poster = models.URLField(blank=True, null=True)
     overview = models.TextField(blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
