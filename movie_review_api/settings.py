@@ -54,9 +54,11 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+os.environ.setdefault("DJANGO_DB_ENGINE", "django.db.backends.postgresql_psycopg")
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
+DATABASES['default']['ENGINE'] = os.environ["DJANGO_DB_ENGINE"]
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
