@@ -1,16 +1,22 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
+
 import dj_database_url
 from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")   # local; in Render you'll set env vars
 
 # Secret & env
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key")
-TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+SECRET_KEY = config('DJANGO_SECRET_KEY')
+
+TMDB_API_KEY = config("TMDB_API_KEY")
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+  # Render handles domain routing
+
+
 INSTALLED_APPS = [
     'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
     'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
@@ -37,11 +43,7 @@ TEMPLATES = [
     ]},},
 ]
 WSGI_APPLICATION = 'movie_review_api.wsgi.application'
-DATABASE_URL = os.getenv('DATABASE_URL', '')
-if DATABASE_URL:
-    DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
-else:
-    DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3','NAME': BASE_DIR / 'db.sqlite3'}}
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -53,14 +55,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
-        conn_max_age=600
-    )
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
