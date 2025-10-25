@@ -70,13 +70,20 @@ def get_genre_mapping():
 
 
 # --- DISCOVER MOVIES (POPULAR / TOP RATED ETC.) ---
-def discover_movies(sort_by="popularity.desc", genre_id=None, page=1):
+def discover_movies(sort_by="popularity.desc", genre_id=None, page=1, region=None, with_original_language=None):
     """Fetches a list of movies from TMDB's discover endpoint."""
-    params = {"sort_by": sort_by, "page": page}
+    params = {
+        "sort_by": sort_by,
+        "page": page
+    }
     if genre_id:
         params["with_genres"] = genre_id
-    return tmdb_get("/discover/movie", params=params, cache_key=f"tmdb_discover_{sort_by}_{genre_id}_{page}")
+    if region:
+        params["region"] = region
+    if with_original_language:
+        params["with_original_language"] = with_original_language
 
+    return tmdb_get("/discover/movie", params=params, cache_key=f"tmdb_discover_{sort_by}_{genre_id}_{page}")
 # --- CORE FUNCTION USED IN YOUR VIEWS ---
 def get_or_create_movie_by_title(title):
     """Returns a Movie instance for a given title (fetching from TMDB if not in DB)."""

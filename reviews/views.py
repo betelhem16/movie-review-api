@@ -20,13 +20,17 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['rating', 'movie__title']
-    search_fields = ['movie_title', 'review_text']
+    search_fields = ['movie__title', 'review_text']  # ✅ fixed field name
     ordering_fields = ['rating', 'created_at']
 
     def perform_create(self, serializer):
-        title = serializer.validated_data.get('movie_title')
-        movie = get_or_create_movie_by_title(title)
+        movie_id = self.request.data.get("movie")
+        if not movie_id:
+            raise serializers.ValidationError({"movie": "This field is required."})
+
+        movie = get_object_or_404(Movie, id=movie_id)
         serializer.save(owner=self.request.user, movie=movie)
+
 
 class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()

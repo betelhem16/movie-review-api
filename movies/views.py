@@ -14,6 +14,7 @@ from .tmdb import discover_movies, tmdb_get, get_genre_mapping, poster_url
 
 class DiscoverMoviesView(APIView):
     permission_classes = [AllowAny]
+
     def get(self, request):
         page = request.query_params.get('page', 1)
         sort_by = request.query_params.get('sort', 'popularity.desc')
@@ -21,16 +22,24 @@ class DiscoverMoviesView(APIView):
         region = request.query_params.get('region')
         original_lang = request.query_params.get('original_language')
 
-        with_genres = None
+        genre_id = None
         if genre_name:
             mapping = get_genre_mapping()
-            with_genres = mapping.get(genre_name.lower())
+            # Flip the mapping: name → id
+            reverse_mapping = {v.lower(): k for k, v in mapping.items()}
+            genre_id = reverse_mapping.get(genre_name.lower())
 
-        data = discover_movies(page=page, sort_by=sort_by, with_genres=with_genres, region=region, with_original_language=original_lang)
+        data = discover_movies(
+            page=page,
+            sort_by=sort_by,
+            genre_id=genre_id,
+            region=region,
+            with_original_language=original_lang
+        )
+
         if data is None:
             return Response({"results": []})
         return Response(data)
-
 class PopularView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
@@ -50,3 +59,24 @@ class MovieListView(generics.ListCreateAPIView):
     search_fields = ['title', 'genres']
     filterset_fields = ['year', 'genres']
     ordering_fields = ['release_date', 'title']
+class ImportMovieView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        title = request.data.get("title")
+        if not title:
+            return Response({"error": "Missing 'title' in request body"}, status=400)
+
+        movie = get_or_create_movie_by_title(title)
+        if not movie:
+            return Response({"error": "Could not import movie"}, status=500)
+
+        return Response({
+            "id": movie.id,
+            "title": movie.title,
+            "year": movie.year,
+            "genres": movie.genres,
+            "overview": movie.overview,
+            "poster": movie.poster,
+            "tmdb_id": movie.tmdb_id
+        })
