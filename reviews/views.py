@@ -24,13 +24,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     ordering_fields = ['rating', 'created_at']
 
     def perform_create(self, serializer):
-        movie_id = self.request.data.get("movie")
-        if not movie_id:
-            raise serializers.ValidationError({"movie": "This field is required."})
+       title = self.request.data.get("movie_title")
+       if not title:
+         raise serializers.ValidationError({"movie_title": "This field is required."})
 
-        movie = get_object_or_404(Movie, id=movie_id)
-        serializer.save(owner=self.request.user, movie=movie)
-
+       movie = get_or_create_movie_by_title(title)
+       serializer.save(owner=self.request.user, movie=movie)
 
 class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
