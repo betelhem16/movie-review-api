@@ -90,33 +90,30 @@ def get_or_create_movie_by_title(title):
     if not title:
         title = "Unknown Movie"
 
-    # 1. Check local DB first
-    existing = Movie.objects.filter(title__iexact=title).first()
-    if existing:
-        return existing
-
-    # 2. Search from TMDB
+    # 1. Search from TMDB
     search = search_movie(title)
     if search and "results" in search and search["results"]:
         top = search["results"][0]
         tmdb_id = top.get("id")
         details = get_movie_details(tmdb_id) or top
 
-        movie, _ = Movie.objects.get_or_create(
-            tmdb_id=tmdb_id,
-            defaults={
-                "title": details.get("title") or title,
-                "year": (details.get("release_date") or "")[:4],
-                "overview": details.get("overview") or "",
-                "poster": poster_url(details.get("poster_path")),
-            },
-        )
-
-        # Save genres if available
+        # Extract fields safely
+        title = details.get("title") or title
+        year = (details.get("release_date") or "0000")[:4]
+        overview = details.get("overview") or "No overview available."
+        poster = poster_url(details.get("poster_path")) or ""
+        rating = details.get("vote_average") or 0.0
         genres = ", ".join([g['name'] for g in details.get('genres', [])]) if details.get("genres") else ""
-        if genres:
-            movie.genres = genres
-            movie.save()
+
+        # 2. Create or update movie
+        movie, created = Movie.objects.get_or_create(tmdb_id=tmdb_id)
+        movie.title = title
+        movie.year = year
+        movie.overview = overview
+        movie.poster = poster
+        movie.rating = rating
+        movie.genres = genres
+        movie.save()
 
         return movie
 
