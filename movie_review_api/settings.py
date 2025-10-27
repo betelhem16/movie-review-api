@@ -15,8 +15,8 @@ load_dotenv(BASE_DIR / ".env")  # Load from local .env if exists
 # Basic Configurations
 # ------------------------------------------------------------
 SECRET_KEY = config("DJANGO_SECRET_KEY")
-DEBUG = config("DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
+DEBUG = config("DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", "movie-review-api-926m.onrender.com,localhost,127.0.0.1").split(",")
 
 TMDB_API_KEY = config("TMDB_API_KEY", default="")
 
