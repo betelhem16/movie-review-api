@@ -17,4 +17,4 @@ services:
       - key: TMDB_API_KEY
         value: a2e4d166b8b7b22d67776540122a87d5
       - key: DATABASE_URL
-        value: postgresql://movie_review_db_8m9n_user:dF6kMaTjphemYmfiDZfGEzE9lsmOklwr@dpg-d3udb67diees73e6e6t0-a/movie_review_db_8m9n
+        value: postgresql://movie_review_db_coge_user:LExTDwj3lIykj8UMviTIjcRghuO6dQ78@dpg-d3vn6s6r433s73d19h90-a/movie_review_db_coge
