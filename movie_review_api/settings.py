@@ -14,7 +14,7 @@ load_dotenv(BASE_DIR / ".env")  # Load from local .env if exists
 # ------------------------------------------------------------
 # Basic Configurations
 # ------------------------------------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", config("SECRET_KEY", default="dev-secret-key"))
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-key") 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")  # temporary; prefer explicit host
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 # ------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,9 +85,9 @@ WSGI_APPLICATION = "movie_review_api.wsgi.application"
 # ------------------------------------------------------------
 # Database Configuration
 # ------------------------------------------------------------
-import dj_database_url
+
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True)
 }
 
 # ------------------------------------------------------------
@@ -112,7 +112,7 @@ USE_TZ = True
 # Static Files
 # ------------------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -154,4 +154,6 @@ CACHES = {
 # Default Primary Key Field Type
 # ------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Heroku/Render proxy header
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
