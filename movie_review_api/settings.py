@@ -14,10 +14,11 @@ load_dotenv(BASE_DIR / ".env")  # Load from local .env if exists
 # ------------------------------------------------------------
 # Basic Configurations
 # ------------------------------------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-key") 
-DEBUG = os.getenv("DEBUG", "False") == "True"
+SECRET_KEY = config('DJANGO_SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")  # temporary; prefer explicit host
+ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+ # temporary; prefer explicit host
 
 
 TMDB_API_KEY = config("TMDB_API_KEY", default="")
@@ -86,18 +87,9 @@ WSGI_APPLICATION = "movie_review_api.wsgi.application"
 # Database Configuration
 # ------------------------------------------------------------
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=600, ssl_require=False)
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+}
 # ------------------------------------------------------------
 # Password Validation
 # ------------------------------------------------------------
