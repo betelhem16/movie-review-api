@@ -14,9 +14,11 @@ load_dotenv(BASE_DIR / ".env")  # Load from local .env if exists
 # ------------------------------------------------------------
 # Basic Configurations
 # ------------------------------------------------------------
-SECRET_KEY = config("DJANGO_SECRET_KEY")
-DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", "movie-review-api-926m.onrender.com,localhost,127.0.0.1").split(",")
+SECRET_KEY = os.getenv("SECRET_KEY", config("SECRET_KEY", default="dev-secret-key"))
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")  # temporary; prefer explicit host
+
 
 TMDB_API_KEY = config("TMDB_API_KEY", default="")
 
@@ -83,15 +85,9 @@ WSGI_APPLICATION = "movie_review_api.wsgi.application"
 # ------------------------------------------------------------
 # Database Configuration
 # ------------------------------------------------------------
+import dj_database_url
 DATABASES = {
-    "default": dj_database_url.config(
-        default=config(
-            "DATABASE_URL",
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-        ),
-        conn_max_age=600,
-        ssl_require=False
-    )
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 # ------------------------------------------------------------
@@ -116,7 +112,7 @@ USE_TZ = True
 # Static Files
 # ------------------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -158,3 +154,4 @@ CACHES = {
 # Default Primary Key Field Type
 # ------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
