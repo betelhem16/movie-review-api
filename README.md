@@ -38,6 +38,7 @@ This API was developed as part of the **ALX Backend Capstone Project**. It mimic
 
 
 ---
+
 Authentication Endpoints
 |  |  |  | 
 |  | /api/users/register/ |  | 
