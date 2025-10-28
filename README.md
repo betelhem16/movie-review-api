@@ -38,7 +38,37 @@ This API was developed as part of the **ALX Backend Capstone Project**. It mimic
 
 
 ---
+## 🔐 Authentication Endpoints
 
+| Method         | Endpoint                          | Description                            |
+|----------------|-----------------------------------|----------------------------------------|
+| POST           | `/api/users/register/`            | Register a new user                    |
+| POST           | `/api/users/login/`               | Obtain JWT token                       |
+| POST           | `/api/users/token/refresh/`       | Refresh JWT token                      |
+| GET / PUT / DELETE | `/api/users/me/`              | View, update, or delete current user   |
+| GET            | `/api/users/list/`                | List all users                         |
+
+---
+
+## 📝 Review Endpoints
+
+| Method         | Endpoint                          | Description                            |
+|----------------|-----------------------------------|----------------------------------------|
+| GET / POST     | `/api/reviews/`                   | List all reviews or create a new one   |
+| GET / PUT / DELETE | `/api/reviews/<id>/`          | Retrieve, update, or delete a review   |
+| POST           | `/api/reviews/<id>/like/`         | Like or unlike a review                |
+
+---
+
+## 🎬 Movie Endpoints
+
+| Method         | Endpoint                                          | Description                                      |
+|----------------|---------------------------------------------------|--------------------------------------------------|
+| GET            | `/api/movies/`                                    | List movies                                      |
+| POST           | `/api/movies/import/`                             | Import movie by TMDb ID                          |
+| GET            | `/api/movies/discover/`                           | Discover trending or genre-based movies         |
+| GET            | `/api/movies/popular/`                            | View popular movies                              |
+| GET            | `/api/movies/<tmdb_id>/recommendations/`          | Get recommended movies based on TMDb ID         |
 
 ## 📦 Installation & Setup
 
