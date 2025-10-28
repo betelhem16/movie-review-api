@@ -39,37 +39,6 @@ This API was developed as part of the **ALX Backend Capstone Project**. It mimic
 
 ---
 
-Authentication Endpoints
-|  |  |  | 
-|  | /api/users/register/ |  | 
-|  | /api/users/login/ |  | 
-|  | /api/users/token/refresh/ |  | 
-|  | /api/users/me/ |  | 
-|  | /api/users/list/ |  | 
-
-
-
-Review Endpoints
-|  |  |  | 
-|  | /api/reviews/ |  | 
-|  | /api/reviews/<id>/ |  | 
-|  | /api/reviews/<id>/like/ |  | 
-
-
-
-
-|  |  |  | 
-|  | /api/movies/ |  | 
-|  | /api/movies/import/ |  | 
-|  | /api/movies/discover/ |  | 
-|  | /api/movies/popular/ |  | 
-|  | /api/movies/<tmdb_id>/recommendations/ |  | 
-
-
-
-
-
-
 
 ## 📦 Installation & Setup
 
